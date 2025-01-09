@@ -4,12 +4,15 @@ import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Home from './Home';
 
-const router = createBrowserRouter([
+const publicRouter = createBrowserRouter([
+  { path: '/', element: <Home /> },
+])
+const privateRouter = createBrowserRouter([
   { path: '/', element: <Home /> },
 ])
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <RouterProvider router={cookies.user ? publicRouter : privateRouter} />
   </React.StrictMode>
 );
