@@ -13,20 +13,20 @@ const Header = () => {
                 <div className='relative float-left group'>
                     <button className="hover:underline underline-offset-8 border-none outline-none text-white py-3.5 px-4 bg-transparent font-inherit m-0">JobConnect</button>
                     <div className="hidden group-hover:block absolute bg-brand-secondary w-full shadow-dropdown z-10">
-                        <Link to="#" className='hover:underline underline-offset-8 block text-white py-2 px-4 text-left'>About Us</Link>
-                        <Link to="#" className='hover:underline underline-offset-8 block text-white py-2 px-4 text-left'>Contact</Link>
-                        <Link to="#" className='hover:underline underline-offset-8 block text-white py-2 px-4 text-left'>FAQ</Link>
+                        <Link to="/jobconnect/about-us" className='hover:underline underline-offset-8 block text-white py-2 px-4 text-left'>About Us</Link>
+                        <Link to="/jobconnect/contact" className='hover:underline underline-offset-8 block text-white py-2 px-4 text-left'>Contact</Link>
+                        <Link to="/jobconnect/faq" className='hover:underline underline-offset-8 block text-white py-2 px-4 text-left'>FAQ</Link>
                     </div>
                 </div>
-                <Link to="#" className='hover:underline underline-offset-8 text-center px-4'>Companies</Link>
-                <Link to="#" className='hover:underline underline-offset-8 text-center px-4'>Jobs</Link>
+                <Link to="/companies" className='hover:underline underline-offset-8 text-center px-4'>Companies</Link>
+                <Link to="/jobs" className='hover:underline underline-offset-8 text-center px-4'>Jobs</Link>
                 <div className='relative float-left group'>
                     <button className="hover:underline underline-offset-8 border-none outline-none text-white py-3.5 px-4 bg-transparent font-inherit m-0">Community</button>
-                    <div className="hidden group-hover:block absolute bg-brand-secondary w-full shadow-dropdown z-10">
-                        <Link to="#" className='hover:underline underline-offset-8 block text-white py-2 px-4 text-left'>Current Students</Link>
-                        <Link to="#" className='hover:underline underline-offset-8 block text-white py-2 px-4 text-left'>Alumni</Link>
-                        <Link to="#" className='hover:underline underline-offset-8 block text-white py-2 px-4 text-left'>Scholarships</Link>
-                        <Link to="#" className='hover:underline underline-offset-8 block text-white py-2 px-4 text-left'>Campus Activities</Link>
+                    <div className="hidden group-hover:block absolute bg-brand-secondary min-w-auto shadow-dropdown z-10">
+                        <Link to="#" className='hover:underline underline-offset-8 block text-white py-2 px-4 text-left whitespace-nowrap'>Current Students</Link>
+                        <Link to="#" className='hover:underline underline-offset-8 block text-white py-2 px-4 text-left whitespace-nowrap'>Alumni</Link>
+                        <Link to="#" className='hover:underline underline-offset-8 block text-white py-2 px-4 text-left whitespace-nowrap'>Scholarships</Link>
+                        <Link to="#" className='hover:underline underline-offset-8 block text-white py-2 px-4 text-left whitespace-nowrap'>Campus Activities</Link>
                     </div>
                 </div>
                 <Link to="#" className='hover:underline underline-offset-8 text-center px-4'>For Employers</Link>
