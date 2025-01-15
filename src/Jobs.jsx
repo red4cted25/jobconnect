@@ -1,18 +1,18 @@
 import { useState } from 'react';
 import Header from './components/Header';
+import Dropdown from './components/Dropdown';
+import JobPost from './components/JobPost';
 import { Link, useParams } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai'; // Search Icon
-import { FaLocationArrow, FaCaretDown } from 'react-icons/fa'; // Location Icon, Filter Icon
+import { FaLocationArrow} from 'react-icons/fa'; // Location Icon
+import joblist from './joblist.json'
 
 const JobsPage = () => {
-    // Variables for styling 
-    // These are able to be changed with the onClick so the user knows they are clicked
-    const dropdownStyle = 'hover:underline underline-offset-8 block text-white py-2 px-4 text-left whitespace-nowrap'
     // React Hooks for the search query and filter values
     const [searchQuery, setSearchQuery] = useState(''); // Job title, keywords, or company
     const [location, setLocation] = useState('Phoenix, AZ');
-    const [experience, setExperience] = useState('All')
-    const [remote, setRemote] = useState(false)
+    const [experience, setExperience] = useState('Any Experience')
+    const [remote, setRemote] = useState('Any')
     const [education, setEducation] = useState('All')
 
     // Pre-set filters based on search parameters
@@ -27,6 +27,12 @@ const JobsPage = () => {
         setExperience('Entry');
         setEducation('High School');
     }
+
+    // Filter Functions
+    // Update experience on selection
+    const handleExperienceChange = (newExperience) => {
+        setExperience(newExperience); // Update button text with the selected option
+    };
 
     return (
         <>
@@ -43,16 +49,39 @@ const JobsPage = () => {
                 {/* Filters */}
                 <div className="flex my-4 mx-0 justify-evenly">
                     {/* Experience Dropdown */}
-                    <div className='relative float-left group'>
-                        <button className="hover:underline underline-offset-8 rounded-md border-none outline-none py-3.5 px-4 bg-brand-light-gray inline-flex items-center gap-2">Experience <FaCaretDown /></button>
-                        <div className="hidden group-hover:block absolute bg-brand-dark-gray min-w-auto shadow-dropdown z-10">
-                            <p className={dropdownStyle} onClick={(e) => {setExperience(e.target.value)}}>Any Experience</p>
-                            <p className={dropdownStyle} onClick={(e) => {setExperience(e.target.value); e.target.className += " underline underline-offset-8"}}>No Experience</p>
-                            <p className={dropdownStyle} onClick={(e) => {setExperience(e.target.value)}}>Entry Level</p>
-                            <p className={dropdownStyle} onClick={(e) => {setExperience(e.target.value)}}>Mid Level</p>
-                        </div>
-                    </div>
+                    <Dropdown 
+                        label="Experience"
+                        options={['Any Experience', 'No Experience', 'Entry Level', 'Mid Level']}
+                        selected={experience}
+                        onSelect={setExperience}
+                    />
+                    <Dropdown 
+                        label="Remote"
+                        options={['Any', 'Remote Only', 'On-Site']}
+                        selected={remote}
+                        onSelect={setRemote}
+                    />
+                    <Dropdown 
+                        label="Education"
+                        options={['All', 'No Degree', 'High School Degree', 'Bachelor\'s Degree', 'Master\'s Degree']}
+                        selected={education}
+                        onSelect={setEducation}
+                    />
                 </div>
+                {/* Job List */}
+                {joblist.map((job) => {
+                    const matchesSearchQuery = job.title.toLowerCase().includes(searchQuery.toLowerCase());
+                    const matchesLocation = job.location.toLowerCase().includes(location.toLowerCase());
+                    const matchesExperience = experience === 'Any Experience' || job.experienceLevel.toLowerCase().includes(experience.toLowerCase());
+                    const matchesRemote = remote === 'Any' || (remote === 'Remote Only' && job.remote) || (remote === 'On-Site' && !job.remote);
+                    const matchesEducation = education === 'All' || (job.education && job.education.toLowerCase().includes(education.toLowerCase()));
+                    
+                    if (matchesSearchQuery && matchesLocation && matchesExperience && matchesRemote && matchesEducation) {
+                        return (
+                            <JobPost key={job.jobId} {...job} />
+                        )
+                    }
+                })}
             </main>
         </>
     )

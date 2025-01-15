@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import HomePage from './Home';
-import JobsPage from './Jobs';
+import JobsPage from './Jobs.jsx';
 
 // Two routes to ensure only users who are logged in can access certain pages/apply for jobs
 // For those who are not logged in:
