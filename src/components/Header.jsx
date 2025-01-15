@@ -4,10 +4,10 @@ const Header = () => {
     return (
         <header className='flex h-20 bg-brand-secondary text-white items-center'>
             {/* Logo */}
-            <div className='flex flex-col font-semibold items-end'>
+            <Link to='/' className='flex flex-col font-semibold items-end'>
                 <h1 className='ml-4 text-2xl'>Job<span className='text-brand-primary'>Connect</span></h1>
                 <h2 className='-mt-1'>@ West-<span className='text-brand-primary'>MEC</span></h2>
-            </div>
+            </Link>
             {/* Navbar Links + Sign In */}
             <nav className='flex ml-auto mr-4 items-center'>
                 <div className='relative float-left group'>
@@ -33,7 +33,7 @@ const Header = () => {
                 {/* Sign In / Log In */}
                 {/* Switches to show username and profile picture when user is signed in */}
                 <div>
-                    <Link to="/login" className='bg-brand-primary mr-4 px-4 py-2 text-white rounded-2xl hover:bg-brand-secondary'>Sign In</Link>
+                    <Link to="/login" className='bg-brand-primary mr-4 px-4 py-2 text-white rounded-2xl hover:bg-brand-dark-primary'>Sign In</Link>
                 </div>
             </nav>
         </header>

@@ -2,9 +2,12 @@ import { useState } from 'react';
 import Header from './components/Header';
 import { Link, useParams } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai'; // Search Icon
-import { FaLocationArrow } from 'react-icons/fa'; // Location Icon
+import { FaLocationArrow, FaCaretDown } from 'react-icons/fa'; // Location Icon, Filter Icon
 
 const JobsPage = () => {
+    // Variables for styling 
+    // These are able to be changed with the onClick so the user knows they are clicked
+    const dropdownStyle = 'hover:underline underline-offset-8 block text-white py-2 px-4 text-left whitespace-nowrap'
     // React Hooks for the search query and filter values
     const [searchQuery, setSearchQuery] = useState(''); // Job title, keywords, or company
     const [location, setLocation] = useState('Phoenix, AZ');
@@ -15,12 +18,12 @@ const JobsPage = () => {
     // Pre-set filters based on search parameters
     const { preset } = useParams()
 
-    if (preset == 'current') {
+    if (preset === 'current') {
         setExperience('None');
         setEducation('None');
     }
 
-    if (preset == 'alumni') {
+    if (preset === 'alumni') {
         setExperience('Entry');
         setEducation('High School');
     }
@@ -30,9 +33,25 @@ const JobsPage = () => {
             <Header />
             <main className="w-full min-h-screen flex flex-col items-center p-4">
                 {/* Search Bar */}
-                <div className="w-full max-w-2xl p-4 shadow-xl rounded-full flex items-center">
-                    <AiOutlineSearch className="text-brand-dark-grey mr-2" />
-                    <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder='Job title, keywords, or company' className='w-full p-2 text-lg border-r border-brand-dark-grey outline-none ' />
+                <div className="w-full max-w-2xl p-4 shadow-[rgba(0,0,0,0.4)_0px_0px_10px_1px] rounded-2xl flex items-center border border-black">
+                    <AiOutlineSearch className="text-brand-dark-gray mr-2 size-10" />
+                    <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder='Job title, keywords, or company' className='w-full p-2 text-lg border-r-2 border-brand-dark-gray outline-none mr-2' />
+                    <FaLocationArrow className="text-brand-dark-gray mr-2 size-8" />
+                    <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder='City, State' className='w-1/2 p-2 text-lg outline-none' />
+                    <button className="bg-brand-primary text-white px-6 py-2 rounded-2xl">Search</button>
+                </div>
+                {/* Filters */}
+                <div className="flex my-4 mx-0 justify-evenly">
+                    {/* Experience Dropdown */}
+                    <div className='relative float-left group'>
+                        <button className="hover:underline underline-offset-8 rounded-md border-none outline-none py-3.5 px-4 bg-brand-light-gray inline-flex items-center gap-2">Experience <FaCaretDown /></button>
+                        <div className="hidden group-hover:block absolute bg-brand-dark-gray min-w-auto shadow-dropdown z-10">
+                            <p className={dropdownStyle} onClick={(e) => {setExperience(e.target.value)}}>Any Experience</p>
+                            <p className={dropdownStyle} onClick={(e) => {setExperience(e.target.value); e.target.className += " underline underline-offset-8"}}>No Experience</p>
+                            <p className={dropdownStyle} onClick={(e) => {setExperience(e.target.value)}}>Entry Level</p>
+                            <p className={dropdownStyle} onClick={(e) => {setExperience(e.target.value)}}>Mid Level</p>
+                        </div>
+                    </div>
                 </div>
             </main>
         </>
