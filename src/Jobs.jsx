@@ -2,10 +2,10 @@ import { useState } from 'react';
 import Header from './components/Header';
 import Dropdown from './components/Dropdown';
 import JobPost from './components/JobPost';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai'; // Search Icon
 import { FaLocationArrow} from 'react-icons/fa'; // Location Icon
-import joblist from './joblist.json'
+import { joblist } from './data'
 
 const JobsPage = () => {
     // React Hooks for the search query and filter values
@@ -27,12 +27,6 @@ const JobsPage = () => {
         setExperience('Entry');
         setEducation('High School');
     }
-
-    // Filter Functions
-    // Update experience on selection
-    const handleExperienceChange = (newExperience) => {
-        setExperience(newExperience); // Update button text with the selected option
-    };
 
     return (
         <>
@@ -74,6 +68,7 @@ const JobsPage = () => {
                     const matchesLocation = job.location.toLowerCase().includes(location.toLowerCase());
                     const matchesExperience = experience === 'Any Experience' || job.experienceLevel.toLowerCase().includes(experience.toLowerCase());
                     const matchesRemote = remote === 'Any' || (remote === 'Remote Only' && job.remote) || (remote === 'On-Site' && !job.remote);
+                    // TODO: Make it so if a job requires no degree, it shows up in other matches
                     const matchesEducation = education === 'All' || (job.education && job.education.toLowerCase().includes(education.toLowerCase()));
                     
                     if (matchesSearchQuery && matchesLocation && matchesExperience && matchesRemote && matchesEducation) {
