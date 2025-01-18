@@ -63,20 +63,20 @@ const JobsPage = () => {
                     />
                 </div>
                 {/* Job List */}
-                {joblist.map((job) => {
-                    const matchesSearchQuery = job.title.toLowerCase().includes(searchQuery.toLowerCase());
-                    const matchesLocation = job.location.toLowerCase().includes(location.toLowerCase());
-                    const matchesExperience = experience === 'Any Experience' || job.experienceLevel.toLowerCase().includes(experience.toLowerCase());
-                    const matchesRemote = remote === 'Any' || (remote === 'Remote Only' && job.remote) || (remote === 'On-Site' && !job.remote);
-                    // TODO: Make it so if a job requires no degree, it shows up in other matches
-                    const matchesEducation = education === 'All' || (job.education && job.education.toLowerCase().includes(education.toLowerCase()));
-                    
-                    if (matchesSearchQuery && matchesLocation && matchesExperience && matchesRemote && matchesEducation) {
-                        return (
+                {joblist
+                    .filter((job) => {
+                        const matchesSearchQuery = job.title.toLowerCase().includes(searchQuery.toLowerCase());
+                        const matchesLocation = job.location.toLowerCase().includes(location.toLowerCase());
+                        const matchesExperience = experience === 'Any Experience' || job.experienceLevel.toLowerCase().includes(experience.toLowerCase());
+                        const matchesRemote = remote === 'Any' || (remote === 'Remote Only' && job.remote) || (remote === 'On-Site' && !job.remote);
+                        const matchesEducation = education === 'All' || (job.education && job.education.toLowerCase().includes(education.toLowerCase()));
+                        return matchesSearchQuery && matchesLocation && matchesExperience && matchesRemote && matchesEducation;
+                    })
+                    .map((job) => {
+                        return(
                             <JobPost key={job.jobId} {...job} />
                         )
-                    }
-                })}
+                    })}
             </main>
         </>
     )

@@ -3,12 +3,18 @@ import { Link } from 'react-router-dom'
 import { RxHamburgerMenu, RxCross1 } from "react-icons/rx";
 
 const Header = () => {
+    // React Hooks for the mobile menu and navbar dropdowns
     const [menuOpen, setMenuOpen] = useState(false);
     const [size, setSize] = useState({
         width: undefined,
         height: undefined
     })
+    const [dropdownOpen, setDropdownOpen] = useState({
+        community: false, // Add a state for each dropdown menu as needed
+        jobconnect: false,
+    });
 
+    // useEffect to check window size and adjust mobile menu open state accordingly
     useEffect(() => {
         const handleResize = () => {
             setSize({
@@ -17,7 +23,6 @@ const Header = () => {
             })
         }
         window.addEventListener('resize', handleResize)
-
         return () => window.removeEventListener('resize', handleResize)
     }, [])
 
@@ -29,9 +34,17 @@ const Header = () => {
     }, [size.width, menuOpen])
     
 
+    // Changes the mobile menu open state to true or false
     const menuToggleHandler = () => {
         setMenuOpen(!menuOpen);
     }
+
+    const toggleDropdown = (menu) => {
+        setDropdownOpen((prev) => ({
+            ...prev,
+            [menu]: !prev[menu],
+        }));
+    };
 
     return (
         // <header className='flex h-20 bg-brand-secondary text-white items-center'>
@@ -73,24 +86,41 @@ const Header = () => {
                     <h1 className='ml-4 text-2xl'>Job<span className='text-brand-primary'>Connect</span></h1>
                     <h2 className='-mt-1'>@ West-<span className='text-brand-primary'>MEC</span></h2>
                 </Link>
+                {/* Navbar Links + Sign In */}
                 <nav className={`top-0 right-full w-full h-screen fixed flex flex-col justify-center items-center text-center bg-black opacity-90 backdrop-blur-sm translate-x-0 translate-y-0 transition-transform duration-300 ease-linear md:transform-none md:flex-row md:bg-transparent md:w-auto md:h-full md:static ${menuOpen ? 'translate-x-full' : ''}`}>
                     <ul className='list-none p-0 flex flex-col mb-spacing-lg md:flex-row md:items-center md:mb-0 md:mr-6'>
-                        <li className='mb-spacing-lg md:mb-0 md:mr-spacing-md'>
-                            <Link to='/' className='no-underline text-inherit py-3 px-5 rounded-nav-button transition-all duration-300 ease-linear hover:underline underline-offset-8'>PageOne</Link>
+                    <li className='relative mb-spacing-lg md:mb-0 md:mr-spacing-md md:group'>
+                            <button onClick={() => toggleDropdown('jobconnect')} className="border-none outline-none rounded-nav-button text-white py-3 px-5 bg-transparent font-inherit hover:underline underline-offset-8">JobConnect</button>
+                            <div className={`${dropdownOpen.jobconnect ? 'block bg-[#2B2B2B]/50' : 'hidden'} relative md:bg-brand-secondary min-w-auto md:shadow-dropdown z-10 md:group-hover:block`}>
+                                {['About', 'Contact Us', 'FAQ'].map((item, index) => {
+                                    return (
+                                        <Link key={index} to="/job" className='hover:underline underline-offset-8 block text-white py-2 px-4 text-left whitespace-nowrap'>{item}</Link>
+                                    );
+                                })}
+                            </div>
                         </li>
                         <li className='mb-spacing-lg md:mb-0 md:mr-spacing-md'>
-                            <Link to='/' className='no-underline text-inherit py-3 px-5 rounded-nav-button transition-all duration-300 ease-linear hover:underline underline-offset-8'>PageOne</Link>
+                            <Link to='/jobs' className='text-inherit py-3 px-5 rounded-nav-button transition-all duration-300 ease-linear hover:underline underline-offset-8'>Jobs</Link>
                         </li>
                         <li className='mb-spacing-lg md:mb-0 md:mr-spacing-md'>
-                            <Link to='/jobs' className='no-underline text-inherit py-3 px-5 rounded-nav-button transition-all duration-300 ease-linear hover:underline underline-offset-8'>Jobs</Link>
+                            <Link to='/companies' className='text-inherit py-3 px-5 rounded-nav-button transition-all duration-300 ease-linear hover:underline underline-offset-8'>Companies</Link>
                         </li>
-                        <li className='mb-spacing-lg md:mb-0 md:mr-spacing-md'>
-                            <Link to='/companies' className='no-underline text-inherit py-3 px-5 rounded-nav-button transition-all duration-300 ease-linear hover:underline underline-offset-8'>Companies</Link>
+                        <li className='relative mb-spacing-lg md:mb-0 md:mr-spacing-md md:group'>
+                            <button onClick={() => toggleDropdown('community')} className="border-none outline-none rounded-nav-button text-white py-3 px-5 bg-transparent font-inherit hover:underline underline-offset-8">Community</button>
+                            <div className={`${dropdownOpen.community ? 'block bg-[#2B2B2B]/50' : 'hidden'} relative md:bg-brand-secondary min-w-auto md:shadow-dropdown z-10 md:group-hover:block`}>
+                                {['Current Students', 'Alumni', 'Scholarships', 'Campus Activities'].map((item, index) => {
+                                    return (
+                                        <Link key={index} to="/job" className='hover:underline underline-offset-8 block text-white py-2 px-4 text-left whitespace-nowrap'>{item}</Link>
+                                    );
+                                })}
+                            </div>
                         </li>
                         <li>
-                            <Link to='/employers' className='no-underline text-inherit py-3 px-5 rounded-nav-button transition-all duration-300 ease-linear hover:underline underline-offset-8'>For Employers</Link>
+                            <Link to='/employers' className='text-inherit py-3 px-5 rounded-nav-button transition-all duration-300 ease-linear hover:underline underline-offset-8'>For Employers</Link>
                         </li>
                     </ul>
+                    {/* Sign In / Log In */}
+                    {/* Switches to show username and profile picture when user is signed in */}
                     <button className='cursor-pointer outline-none py-3 px-5 rounded-nav-button text-base bg-brand-primary text-white transition-all ease-linear duration-300 hover:bg-brand-dark-primary active:bg-gradient-to-tr active:from-brand-primary active:via-brand-dark-primary active:to-brand-primary'>Sign In</button>
                 </nav>
                 <div className="cursor-pointer flex items-center text-3xl transition-all ease-linear duration-300 relative hover:text-brand-primary md:hidden">

@@ -9,11 +9,11 @@ const HomePage = () => {
   return (
     <>
       <Header />
-      <main className='w-screen h-[calc(100vh-5rem)] flex flex-col'>
+      <main className='w-screen h-[calc(100vh-9rem)] flex flex-col'>
         {/* Hero Section */}
         {/* The hero section is a video of Northeast Campus and a gradient overlay with a tagline */}
         <section className='w-full h-2/5 md:h-3/5 flex flex-col justify-center bg-gradient-to-tr from-brand-primary via-brand-dark-primary to-brand-primary font-Golos font-extrabold'>
-          <div className='w-fit text-brand-dark-primary rounded-r-2xl bg-brand-dark-gray bg-opacity-50 pl-8 p-6'>
+          <div className='w-fit text-brand-dark-primary rounded-r-2xl bg-brand-dark-gray/50 pl-8 p-6'>
             <h1 className="text-5xl leading-hero italic drop-shadow-text md:text-7xl">FIND YOUR <br />ARROW</h1>
             <h2 className="text-xl text-white drop-shadow-text-caption mt-4 md:text-2xl">THIS IS GENERATION <span className="text-brand-dark-primary">ORANGE</span></h2>
           </div>
@@ -21,7 +21,7 @@ const HomePage = () => {
         {/* Page Links */}
         {/* All of these lead to the /jobs page */}
         {/* They all have different effects on the filter system in place to serve as quick links to specific searches */}
-        <section className='flex grow-[0.25] justify-around items-center text-center mt-4 mx-6 flex-wrap'>
+        <section className='flex grow-[0.25] justify-around items-center text-center mt-18 mx-6 flex-wrap'>
           {/* Apply */}
           <Link to="/jobs">
             <div className="bg-brand-light-gray flex flex-col justify-center p-6 gap-4 size-40 md:size-48">
