@@ -33,15 +33,15 @@ const JobsPage = () => {
             <Header />
             <main className="w-full min-h-screen flex flex-col items-center p-4">
                 {/* Search Bar */}
-                <div className="w-full max-w-2xl p-4 shadow-[rgba(0,0,0,0.4)_0px_0px_10px_1px] rounded-2xl flex items-center border border-black">
-                    <AiOutlineSearch className="text-brand-dark-gray mr-2 size-10" />
-                    <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder='Job title, keywords, or company' className='w-full p-2 text-lg border-r-2 border-brand-dark-gray outline-none mr-2' />
-                    <FaLocationArrow className="text-brand-dark-gray mr-2 size-8" />
+                <div className="w-full md:max-w-2xl p-4 shadow-[rgba(0,0,0,0.4)_3px_3px_1px_0px] rounded-2xl flex flex-wrap md:flex-nowrap items-center border border-black">
+                    <AiOutlineSearch className="text-brand-dark-gray mr-2 size-7 md:size-10" />
+                    <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder='Job title, keywords, or company' className='w-10/12 p-2 text-lg outline-none border-b-2 border-brand-dark-gray md:w-full md:border-b-0 md:border-r-2 md:mr-2' />
+                    <FaLocationArrow className="text-brand-dark-gray mr-2 size-5 md:size-8" />
                     <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder='City, State' className='w-1/2 p-2 text-lg outline-none' />
                     <button className="bg-brand-primary text-white px-6 py-2 rounded-2xl">Search</button>
                 </div>
                 {/* Filters */}
-                <div className="flex my-4 mx-0 justify-evenly">
+                <div className="flex my-4 mx-0 justify-around flex-wrap md:justify-start md:gap-4">
                     {/* Experience Dropdown */}
                     <Dropdown 
                         label="Experience"
