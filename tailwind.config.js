@@ -39,7 +39,11 @@ module.exports = {
         'spacing-md': '1rem',
         'spacing-lg': '2rem',
         '18': '4.5rem',
-      }
+      },
+      spacing: {
+        // Custom spacing values for mobile navbar
+        'neg-full': '-100%',
+      },
     },
   },
   plugins: [],
