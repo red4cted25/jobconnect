@@ -1,8 +1,8 @@
 import { FaCaretDown } from 'react-icons/fa';
 
-const Dropdown = ({ options, selected, onSelect, width='w-44' }) => {
+const Dropdown = ({ options, selected, onSelect, width='w-auto' }) => {
     return (
-        <div className={`relative float-left group ${width} mx-1`}>
+        <div className={`relative float-left group min-w-44 ${width} mx-1 mb-3`}>
             <button 
                 className="hover:underline underline-offset-8 rounded-md border-none outline-none py-3.5 px-4 inline-flex items-center gap-2 w-full" 
                 style={{backgroundColor: selected !== options[0] ? '#333' : '#d1d5db',color: selected !== options[0] ? '#fff' : 'inherit',}}

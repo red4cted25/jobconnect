@@ -10,7 +10,7 @@ import { joblist } from './data'
 const JobsPage = () => {
     // React Hooks for the search query and filter values
     const [searchQuery, setSearchQuery] = useState(''); // Job title, keywords, or company
-    const [location, setLocation] = useState('Phoenix, AZ');
+    const [location, setLocation] = useState('');
     const [experience, setExperience] = useState('Any Experience')
     const [remote, setRemote] = useState('Any')
     const [education, setEducation] = useState('All')
@@ -37,7 +37,7 @@ const JobsPage = () => {
                     <AiOutlineSearch className="text-brand-dark-gray mr-2 size-7 md:size-10" />
                     <input type="text" value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} placeholder='Job title, keywords, or company' className='w-10/12 p-2 text-lg outline-none border-b-2 border-brand-dark-gray md:w-full md:border-b-0 md:border-r-2 md:mr-2' />
                     <FaLocationArrow className="text-brand-dark-gray mr-2 size-5 md:size-8" />
-                    <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder='City, State' className='w-1/2 p-2 text-lg outline-none' />
+                    <input type="text" value={location} onChange={(e) => setLocation(e.target.value)} placeholder='Phoenix, AZ' className='w-1/2 p-2 text-lg outline-none' />
                     <button className="bg-brand-primary text-white px-6 py-2 rounded-2xl">Search</button>
                 </div>
                 {/* Filters */}
