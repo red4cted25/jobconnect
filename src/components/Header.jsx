@@ -66,8 +66,8 @@ const Header = () => {
             <div className="text-white max-w-full h-full flex items-center justify-between relative z-50">
                 {/* Logo */}
                 <Link to='/' className='flex flex-col font-semibold items-end'>
-                    <h1 className='ml-4 text-2xl'>Job<span className='text-brand-primary'>Connect</span></h1>
-                    <h2 className='-mt-1'>@ West-<span className='text-brand-primary'>MEC</span></h2>
+                    <h1 className='ml-4 text-2xl'>Job<span className='bg-gradient-to-b from-brand-primary-light to-brand-primary inline-block text-transparent bg-clip-text'>Connect</span></h1>
+                    <h2 className='-mt-1'>@ West-<span className='bg-gradient-to-b from-brand-primary-light to-brand-primary inline-block text-transparent bg-clip-text'>MEC</span></h2>
                 </Link>
                 {/* Main Navigation */}
                 <nav className={

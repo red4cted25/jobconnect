@@ -30,3 +30,23 @@ code {
 .drop-shadow-text-caption {
   text-shadow: 0.125rem 0.125rem rgba(0,0,0, 0.25)
 }
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;  /* Adjust width for horizontal scrollbar */
+  height: 8px; /* Adjust height for vertical scrollbar */
+  transition: all 1300ms ease-in-out;
+}
+
+::-webkit-scrollbar-track {
+  background: #0C2240; /* Dark grey background */ 
+}
+
+::-webkit-scrollbar-thumb {
+  background: #D9D9D9; /* Lighter grey for thumb */
+  border-radius: 10px; /* Rounded corners */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #5C5C5C; /* Slightly darker thumb on hover */
+}

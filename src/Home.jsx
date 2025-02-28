@@ -12,8 +12,8 @@ const HomePage = () => {
       <main className='w-screen h-[calc(100vh-9rem)] flex flex-col'>
         {/* Hero Section */}
         {/* The hero section is a video of Northeast Campus and a gradient overlay with a tagline */}
-        <section className='w-full h-2/5 md:h-3/5 flex flex-col justify-center bg-gradient-to-tr from-brand-primary via-brand-dark-primary to-brand-primary font-Golos font-extrabold'>
-          <div className='w-fit text-brand-dark-primary rounded-r-2xl bg-brand-dark-gray/50 pl-8 p-6'>
+        <section className='w-full h-2/5 md:h-3/5 flex flex-col justify-center bg-gradient-to-br from-brand-primary-light via-brand-primary to-brand-primary-light font-Golos font-extrabold'>
+          <div className='w-fit text-brand-primary rounded-r-2xl bg-brand-dark-gray/50 pl-8 p-6'>
             <h1 className="text-5xl leading-hero italic drop-shadow-text md:text-7xl">FIND YOUR <br />ARROW</h1>
             <h2 className="text-xl text-white drop-shadow-text-caption mt-4 md:text-2xl">THIS IS GENERATION <span className="text-brand-dark-primary">ORANGE</span></h2>
           </div>

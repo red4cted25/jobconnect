@@ -60,10 +60,10 @@ const JobPost = ({jobId, title, company, location, remote, payRange, experienceL
         
                 {/* Action Section */}
                 <div className="flex flex-col gap-2 md:min-w-[120px]">
-                    <Link to={`/jobs/apply/${jobId}`} className="w-full bg-brand-primary text-white py-2 px-4 rounded-md uppercase text-center text-sm font-medium hover:bg-opacity-90 transition-colors">
+                    <Link to={`/jobs/apply/${jobId}`} className="w-full bg-brand-primary text-white py-2 px-4 rounded-md uppercase text-center text-sm font-medium hover:bg-brand-primary-light transition-colors">
                         Apply Now
                     </Link>
-                    <Link to={`/jobs/post/${jobId}`} className="w-full bg-transparent border border-brand-primary text-brand-primary py-2 px-4 rounded-md uppercase text-center text-sm font-medium hover:bg-brand-primary hover:text-white transition-colors">
+                    <Link to={`/jobs/post/${jobId}`} className="w-full bg-white border border-brand-primary text-brand-primary py-2 px-4 rounded-md uppercase text-center text-sm font-medium hover:bg-brand-primary-light hover:text-white transition-colors">
                         Learn More
                     </Link>
                 </div>

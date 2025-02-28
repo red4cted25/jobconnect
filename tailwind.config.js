@@ -19,8 +19,8 @@ module.exports = {
       },
       colors: {
         // Custom color palette
-        'brand-primary': '#FAA802',
-        'brand-dark-primary': '#FF8000',
+        'brand-primary': '#FF860D',
+        'brand-primary-light': '#FAA802',
         'brand-secondary': '#0C2240',
         'brand-light-gray': '#D9D9D9',
         'brand-dark-gray': '#5C5C5C'
