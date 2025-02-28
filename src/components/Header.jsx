@@ -75,7 +75,7 @@ const Header = () => {
                     flex flex-col justify-center items-center text-center 
                     bg-black opacity-90 backdrop-blur-sm 
                     translate-x-0 translate-y-0 transition-transform duration-300 ease-linear 
-                    md:transform-none md:flex-row md:bg-transparent md:w-auto md:h-full md:static 
+                    md:transform-none md:flex-row md:bg-transparent md:w-auto md:h-full md:static md:opacity-100
                     ${menuOpen ? ' translate-x-neg-full' : ''}
                 `}>
                     
