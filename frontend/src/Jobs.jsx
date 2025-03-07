@@ -1,11 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Header from './components/Header';
 import Dropdown from './components/Dropdown';
 import JobPost from './components/JobPost';
 import { useParams } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai'; // Search Icon
-import { FaLocationArrow} from 'react-icons/fa'; // Location Icon
-import { joblist } from './data'
+import { FaLocationArrow } from 'react-icons/fa'; // Location Icon
 
 const JobsPage = () => {
     // React Hooks for the search query and filter values
@@ -14,6 +13,40 @@ const JobsPage = () => {
     const [experience, setExperience] = useState('Any Experience')
     const [remote, setRemote] = useState('Any')
     const [education, setEducation] = useState('All')
+    
+    // Get jobs from MongoDB
+    const [jobs, setJobs] = useState([]);
+    
+    useEffect(() => {
+        fetch('http://localhost:5000/api/jobs')
+        .then((res) => res.json())
+        .then((data) => {
+            if (data.success) {
+                const formatted = data.data.map((job) => ({
+                    jobId: job.jobId,
+                    title: job.title,
+                    company: job.company,
+                    desc: job.desc,
+                    payRange: {
+                        min: job.payRange?.min ?? 0,  // Default to 0 if undefined
+                        max: job.payRange?.max ?? 0,
+                        currency: job.payRange?.currency || 'USD',
+                        unit: job.payRange?.unit || 'hourly',
+                    },
+                    location: job.location,
+                    datePosted: new Date(job.datePosted),
+                    logo: job.logo,
+                    remote: job.remote,
+                    education: job.education,
+                    experienceLevel: job.experienceLevel,
+                }));
+                setJobs(formatted);
+            } else {
+                console.error('Failed to fetch jobs:', data.message);
+            }
+        })
+        .catch((err) => console.error('Error fetching jobs:', err));
+    }, []);
 
     // Pre-set filters based on search parameters
     const { preset } = useParams()
@@ -63,7 +96,7 @@ const JobsPage = () => {
                     />
                 </div>
                 {/* Job List */}
-                {joblist
+                {jobs
                     .filter((job) => {
                         const matchesSearchQuery = job.title.toLowerCase().includes(searchQuery.toLowerCase());
                         const matchesLocation = job.location.toLowerCase().includes(location.toLowerCase());

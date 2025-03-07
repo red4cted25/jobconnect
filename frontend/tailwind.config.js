@@ -28,7 +28,8 @@ module.exports = {
       fontFamily: {
         // Custom font families
         Golos: ['Golos Text', 'system-ui'],
-        Quicksand: ['Quicksand', 'system-ui']
+        Quicksand: ['Quicksand', 'system-ui'],
+        'Red-Hat': ['Red-Hat', 'system-ui'] 
       },
       lineHeight: {
         // Custom line height for hero sections
