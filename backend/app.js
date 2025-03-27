@@ -5,12 +5,13 @@ const cors = require('cors');
 
 app.use(cors());
 
-const connectDB = require('./db/connect'); 
-connectDB(process.env.MONGOURI);
+const connectDB = require('./db/connect');
+connectDB(process.env.MONGO_URI);
 
 app.use(express.json());
 
 app.use('/api/jobs', require('./routes/jobRoutes'));
+app.use('/api/auth', require('./routes/authRoutes'));
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {
