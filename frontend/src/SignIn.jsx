@@ -42,7 +42,7 @@ const AuthPage = () => {
                 navigate('/dashboard');
             } else {
                 // Sign up logic
-                const response = await axios.post('/api/auth/signup', {
+                const response = await axios.post('/api/auth/register', {
                     email: formData.email,
                     password: formData.password,
                     firstName: formData.firstName,
