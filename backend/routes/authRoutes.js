@@ -63,25 +63,8 @@ router.post('/register', rateLimitAuth, async (req, res) => {
             isVerified: false
         });
 
-        // Generate email verification token
-        const verificationToken = generateVerificationToken();
-        user.emailVerificationToken = verificationToken;
-        user.emailVerificationExpires = Date.now() + 24 * 60 * 60 * 1000; // 24 hours
-
         // Save user
         await user.save();
-
-        // Send verification email
-        const verificationUrl = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`;
-        try {
-            await sendEmail({
-                email: user.email,
-                subject: 'Verify Your Email',
-                message: `Click the following link to verify your email: ${verificationUrl}`
-            });
-        } catch (emailError) {
-            console.error('Email send error:', emailError);
-        }
 
         // Generate token
         const token = generateToken(user);

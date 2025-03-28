@@ -61,6 +61,11 @@ const Header = () => {
         }));
     };
 
+    
+    if(!localStorage.getItem('token')) {
+        
+    }
+
     return (
         <header className="bg-brand-secondary w-full h-20 px-6 md:px-12 transition-all ease-linear duration-300">
             <div className="text-white max-w-full h-full flex items-center justify-between relative z-50">
@@ -123,7 +128,9 @@ const Header = () => {
                     </ul>
                     {/* Sign In / Log In */}
                     {/* Switches to show username and profile picture when user is signed in */}
+                    {(!loggedIn) ? 
                     <Link to="/login" className='cursor-pointer outline-none py-3 px-5 rounded-nav-button text-base bg-brand-primary text-white transition-all ease-linear duration-300 hover:bg-brand-dark-primary active:bg-gradient-to-tr active:from-brand-primary active:via-brand-dark-primary active:to-brand-primary'>Sign In</Link>
+                    : <Link to="/profile" className=''></Link>}
                 </nav>
                 <div className="cursor-pointer flex items-center text-3xl transition-all ease-linear duration-300 relative hover:text-brand-primary md:hidden">
                     {!menuOpen ? <RxHamburgerMenu onClick={menuToggleHandler}/> : <RxCross1 onClick={menuToggleHandler} />}

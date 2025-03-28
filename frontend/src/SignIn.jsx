@@ -30,7 +30,7 @@ const AuthPage = () => {
         try {
             if (isLogin) {
                 // Login logic
-                const response = await axios.post('/api/auth/login', {
+                const response = await axios.post('http://localhost:5000/api/auth/login', {
                     email: formData.email,
                     password: formData.password
                 });
@@ -42,7 +42,7 @@ const AuthPage = () => {
                 navigate('/dashboard');
             } else {
                 // Sign up logic
-                const response = await axios.post('/api/auth/register', {
+                const response = await axios.post('http://localhost:5000/api/auth/register', {
                     email: formData.email,
                     password: formData.password,
                     firstName: formData.firstName,
@@ -52,10 +52,11 @@ const AuthPage = () => {
 
                 // Automatically log in after sign up
                 localStorage.setItem('token', response.data.token);
-                navigate('/dashboard');
+                navigate('/');
             }
         } catch (err) {
             // Handle errors
+            console.log(err)
             setError(err.response?.data?.message || 'An error occurred');
         }
     };

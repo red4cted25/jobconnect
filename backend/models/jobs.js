@@ -17,6 +17,6 @@ const jobSchema = new mongoose.Schema({
     desc: {type: String, required: true},
     logo: {type: String, required: true},
     education: {type: String},
-});
+}, {collection: 'jobs'});
 
 module.exports = mongoose.model('Job', jobSchema);
