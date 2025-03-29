@@ -65,7 +65,7 @@ const AuthPage = () => {
         <>
             <div className="h-screen w-screen bg-brand-light-gray absolute -z-10"></div>
             {/* Back Arrow */}
-            <Link to='/' className='flex gap-2 ml-4 pt-2 mb-12 items-center text-inherit py-3 px-5 transition-all duration-300 ease-linear hover:underline underline-offset-8'>
+            <Link to='/' className='flex gap-2 ml-4 pt-2 mb-12 items-center text-inherit text-[#5c5c5c] py-3 px-5 transition-all duration-300 ease-linear hover:underline underline-offset-8'>
                 <BiArrowBack />
                 <h1>Back</h1>
             </Link>
