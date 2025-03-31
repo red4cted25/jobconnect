@@ -1,22 +1,68 @@
 const mongoose = require('mongoose');
 
-const jobSchema = new mongoose.Schema({
-    jobId: {type: Number, required: true},
-    title: {type: String, required: true},
-    company: {type: String, required: true},
-    location: {type: String, required: true},
-    remote: {type: Boolean, required: true},
-    payRange: {
-        min: {type: Number},
-        max: {type: Number},
-        currency: {type: String},
-        unit: {type: String},
+const JobSchema = new mongoose.Schema({
+    title: {
+        type: String,
+        required: [true, 'Must provide job title'],
+        trim: true,
     },
-    experienceLevel: {type: String},
-    datePosted: {type: Date, required: true},
-    desc: {type: String, required: true},
-    logo: {type: String, required: true},
-    education: {type: String},
-}, {collection: 'jobs'});
+    company: {
+        type: String,
+        required: [true, 'Must provide company name'],
+        trim: true,
+    },
+    location: {
+        type: String,
+        required: [true, 'Must provide location'],
+        trim: true,
+    },
+    remote: {
+        type: Boolean,
+        default: false
+    },
+    payRange: {
+        min: {
+            type: Number,
+            required: false
+        },
+        max: {
+            type: Number,
+            required: false
+        },
+        currency: {
+            type: String,
+            default: 'USD'
+        },
+        unit: {
+            type: String,
+            default: 'hour',
+            enum: ['hour', 'day', 'week', 'month', 'year']
+        }
+    },
+    experienceLevel: {
+        type: String,
+        required: [true, 'Must provide experience level'],
+        enum: ['Entry', 'Intermediate', 'Senior', 'Executive'],
+        trim: true,
+    },
+    datePosted: {
+        type: Date,
+        default: Date.now
+    },
+    description: {
+        type: String,
+        required: [true, 'Must provide job description'],
+        trim: true,
+    },
+    logo: {
+        type: String,
+        trim: true,
+        required: [true, 'Must provide company logo']
+    },
+    education: {
+        type: String,
+        trim: true
+    }
+}, {collection: 'jobs'})
 
-module.exports = mongoose.model('Job', jobSchema);
+module.exports = mongoose.model('Job', JobSchema);

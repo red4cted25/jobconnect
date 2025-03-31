@@ -8,8 +8,8 @@ import JobsPage from './Jobs.jsx';
 import SignInPage from './SignIn.jsx';
 import FAQPage from './FAQ.jsx';
 import SettingsPage from './Settings.jsx';
-import ApplyPage from './apply.jsx';
-import ProfilePage from './profile.jsx';
+import ProfilePage from './Profile.jsx';
+import ApplyPage from './Apply.jsx';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {

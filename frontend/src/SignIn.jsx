@@ -25,7 +25,7 @@ const AuthPage = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
+        setError(''); // Clear any previous errors
 
         try {
             if (isLogin) {
@@ -38,8 +38,8 @@ const AuthPage = () => {
                 // Store the JWT token
                 localStorage.setItem('token', response.data.token);
                 
-                // Redirect to dashboard or home page
-                navigate('/dashboard');
+                // Redirect home page
+                navigate('/');
             } else {
                 // Sign up logic
                 const response = await axios.post('http://localhost:5000/api/auth/register', {
@@ -58,6 +58,7 @@ const AuthPage = () => {
             // Handle errors
             console.log(err)
             setError(err.response?.data?.message || 'An error occurred');
+            console.log(error)
         }
     };
     
@@ -81,12 +82,12 @@ const AuthPage = () => {
                         {isLogin ? 'Welcome Back!' : 'Ready to take the next step?'}
                     </h2>
                     <p className="text-gray-600 mb-6">
-                        {isLogin ? 'Log in to your account' : 'Create an account or '}
+                        {isLogin ? 'Log in to your account or ' : 'Create an account or '}
                         <span 
                             onClick={() => setIsLogin(!isLogin)} 
                             className="text-blue-600 cursor-pointer hover:underline"
                         >
-                            {isLogin ? 'Sign up' : 'sign in'}
+                            {isLogin ? 'sign up' : 'log in'}
                         </span>
                     </p>
                     

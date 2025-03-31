@@ -1,63 +1,108 @@
-import { createContext, useState, useContext, useEffect } from 'react';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import axios from 'axios';
 
-// Create an authentication context
-const AuthContext = createContext(null);
+// Create authentication context
+const AuthContext = createContext();
 
-// AuthProvider component to manage authentication state
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const [user, setUser] = useState(null);
+    const [currentUser, setCurrentUser] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
-    // Check authentication on initial load
     useEffect(() => {
+        // Check if token exists and validate user session
         const token = localStorage.getItem('token');
-        const userData = localStorage.getItem('user');
-        
-        if (token && userData) {
-            try {
-                // Parse user data and set authentication
-                const parsedUser = JSON.parse(userData);
-                setIsAuthenticated(true);
-                setUser(parsedUser);
-            } catch (error) {
-                // Clear invalid localStorage data
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-            }
+        if (token) {
+            axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+            fetchUserProfile();
+        } else {
+            setLoading(false);
         }
     }, []);
 
-    // Login method
-    const login = (token, userData) => {
-        // Store token and user data in localStorage
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(userData));
-        
-        // Update authentication state
-        setIsAuthenticated(true);
-        setUser(userData);
+    // Fetch user profile with token
+    const fetchUserProfile = async () => {
+        try {
+            setLoading(true);
+            // Get token from local storage
+            const token = localStorage.getItem('token');
+            if (!token) {
+                console.warn('No token found, redirecting to login');
+                logout();
+                return;
+            }
+
+            // Include token in request headers
+            const response = await axios.get('http://localhost:5000/api/auth/profile');
+
+            if (response.data) {
+                setCurrentUser(response.data);
+            } else {
+                console.warn('Profile data is empty or undefined');
+                setCurrentUser(null);
+            }
+        } catch (err) {
+            console.error('Error fetching profile:', err.message || err);
+            logout(); // If token is invalid, log the user out
+        } finally {
+            setLoading(false);
+        }
     };
 
-    // Logout method
+    // Login function
+    const login = async (email, password) => {
+        try {
+            setLoading(true);
+            setError(null);
+            const res = await axios.post('http://localhost:5000/api/auth/login', { email, password });
+
+            localStorage.setItem('token', res.data.token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
+            setCurrentUser(res.data.user);
+        } catch (err) {
+            setError(err.response?.data?.message || 'Login failed');
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Register function
+    const register = async (userData) => {
+        try {
+            setLoading(true);
+            setError(null);
+            const res = await axios.post('http://localhost:5000/api/auth/register', userData);
+
+            localStorage.setItem('token', res.data.token);
+            axios.defaults.headers.common['Authorization'] = `Bearer ${res.data.token}`;
+            setCurrentUser(res.data.user);
+        } catch (err) {
+            setError(err.response?.data?.message || 'Registration failed');
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Logout function
     const logout = () => {
-        // Remove token and user data from localStorage
         localStorage.removeItem('token');
-        localStorage.removeItem('user');
-        
-        // Reset authentication state
-        setIsAuthenticated(false);
-        setUser(null);
+        delete axios.defaults.headers.common['Authorization'];
+        setCurrentUser(null);
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={{ currentUser, loading, error, login, register, logout }}>
+            {children}
+        </AuthContext.Provider>
     );
 };
 
-// Custom hook to use authentication context
+// Custom hook to use the auth context
 export const useAuth = () => {
     const context = useContext(AuthContext);
-    if (context === null) {
+    if (!context) {
         throw new Error('useAuth must be used within an AuthProvider');
     }
     return context;

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const validator = require('validator');
+const crypto = require('crypto');
 
 const UserSchema = new mongoose.Schema({
     email: {
@@ -58,6 +59,10 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    applications: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Application'
+    }],
     resetPasswordToken: String,
     resetPasswordExpire: Date,
     lastLogin: Date

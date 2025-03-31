@@ -4,7 +4,7 @@ const { RateLimiterMemory } = require('rate-limiter-flexible');
 
 // Rate limiter for authentication attempts
 const authRateLimiter = new RateLimiterMemory({
-    points: 5, // 5 attempts
+    points: 15, // 5 attempts
     duration: 15 * 60, // per 15 minutes
 });
 

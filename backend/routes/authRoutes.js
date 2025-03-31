@@ -1,13 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
 const User = require('../models/users');
 const { authenticateToken, rateLimitAuth } = require('../middleware/authenticateToken');
-const sendEmail = require('../utils/sendEmail'); // You'll need to implement this
 
 // Generate JWT Token with more options
-const generateToken = (user, rememberMe = false) => {
+const generateToken = (user) => {
     return jwt.sign(
         { 
             id: user._id,
@@ -16,23 +14,18 @@ const generateToken = (user, rememberMe = false) => {
         }, 
         process.env.JWT_SECRET, 
         { 
-            expiresIn: rememberMe ? '30d' : '1d' // Longer token if "remember me" is selected
+            expiresIn:  '1d', // Token expires in 1 day
         }
     );
-};
-
-// Generate Email Verification Token
-const generateVerificationToken = () => {
-    return crypto.randomBytes(32).toString('hex');
 };
 
 // Register new user
 router.post('/register', rateLimitAuth, async (req, res) => {
     try {
-        const { email, password, firstName, lastName, accountType } = req.body;
+        const { email, password, firstName, lastName, username } = req.body;
 
         // Validate input
-        if (!email || !password || !firstName || !lastName) {
+        if (!email || !password || !firstName || !lastName || !username) {
             return res.status(400).json({ message: 'Please provide all required fields' });
         }
 
@@ -40,7 +33,7 @@ router.post('/register', rateLimitAuth, async (req, res) => {
         const existingUser = await User.findOne({ 
             $or: [
                 { email },
-                { username: req.body.username }
+                { username }
             ]
         });
 
@@ -58,8 +51,8 @@ router.post('/register', rateLimitAuth, async (req, res) => {
             password,
             firstName,
             lastName,
-            username: req.body.username,
-            accountType: accountType || 'student',
+            username,
+            accountType: 'student',
             isVerified: false
         });
 
@@ -104,13 +97,6 @@ router.post('/login', rateLimitAuth, async (req, res) => {
         const isMatch = await user.isValidPassword(password);
         if (!isMatch) {
             return res.status(401).json({ message: 'Invalid email or password' });
-        }
-
-        // Check if email is verified
-        if (!user.isVerified) {
-            return res.status(403).json({ 
-                message: 'Please verify your email before logging in' 
-            });
         }
 
         // Update last login
@@ -259,6 +245,7 @@ router.post('/reset-password/:token', async (req, res) => {
 
 // Protected routes for user profile and settings
 router.get('/profile', authenticateToken, (req, res) => {
+    console.log('GET /profile - User ID:', req.user._id); // Log user ID for debugging
     res.json(req.user);
 });
 
