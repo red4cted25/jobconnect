@@ -3,13 +3,14 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+import ApplyPage from './components/Apply.jsx';
+import ProfilePage from './components/Profile.jsx';
 import HomePage from './Home.jsx';
 import JobsPage from './Jobs.jsx';
 import SignInPage from './SignIn.jsx';
 import FAQPage from './FAQ.jsx';
 import SettingsPage from './Settings.jsx';
-import ApplyPage from './apply.jsx';
-import ProfilePage from './profile.jsx';
+
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {

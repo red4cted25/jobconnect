@@ -10,37 +10,15 @@ const authRateLimiter = new RateLimiterMemory({
 
 // Middleware to verify JWT token
 const authenticateToken = async (req, res, next) => {
-    // Get the token from the authorization header
-    const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1]; // Bearer TOKEN
-
-    if (token == null) {
-        return res.status(401).json({ message: 'No token provided' });
-    }
+    const token = req.headers.authorization?.split(" ")[1]; // "Bearer <token>"
+    if (!token) return res.status(401).json({ message: "No token provided" });
 
     try {
-        // Verify the token
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        
-        // Find user and attach to request
-        const user = await User.findById(decoded.id).select('-password');
-        
-        if (!user) {
-            return res.status(401).json({ message: 'User not found' });
-        }
-
-        // Check if user account is active/verified
-        if (user.isVerified === false) {
-            return res.status(403).json({ message: 'Account not verified' });
-        }
-
-        req.user = user;
+        req.user = { id: decoded.userId };
         next();
-    } catch (error) {
-        if (error.name === 'TokenExpiredError') {
-            return res.status(401).json({ message: 'Token expired' });
-        }
-        return res.status(403).json({ message: 'Invalid token' });
+    } catch (err) {
+        return res.status(401).json({ message: "Invalid token" });
     }
 };
 

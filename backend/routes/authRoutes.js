@@ -4,32 +4,12 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
 const User = require('../models/users');
 const { authenticateToken, rateLimitAuth } = require('../middleware/authenticateToken');
-const sendEmail = require('../utils/sendEmail'); // You'll need to implement this
-
-// Generate JWT Token with more options
-const generateToken = (user, rememberMe = false) => {
-    return jwt.sign(
-        { 
-            id: user._id,
-            email: user.email,
-            accountType: user.accountType
-        }, 
-        process.env.JWT_SECRET, 
-        { 
-            expiresIn: rememberMe ? '30d' : '1d' // Longer token if "remember me" is selected
-        }
-    );
-};
-
-// Generate Email Verification Token
-const generateVerificationToken = () => {
-    return crypto.randomBytes(32).toString('hex');
-};
+const sendEmail = require('../utils/CloudinaryConfig');
 
 // Register new user
 router.post('/register', rateLimitAuth, async (req, res) => {
     try {
-        const { email, password, firstName, lastName, accountType } = req.body;
+        const { email, password, firstName, lastName, username } = req.body;
 
         // Validate input
         if (!email || !password || !firstName || !lastName) {
@@ -40,7 +20,7 @@ router.post('/register', rateLimitAuth, async (req, res) => {
         const existingUser = await User.findOne({ 
             $or: [
                 { email },
-                { username: req.body.username }
+                { username }
             ]
         });
 
@@ -52,35 +32,26 @@ router.post('/register', rateLimitAuth, async (req, res) => {
             });
         }
 
+        
+        // Hash password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+
         // Create new user
-        const user = new User({
+        const newUser = new User({
             email,
-            password,
+            password: hashedPassword,
             firstName,
             lastName,
-            username: req.body.username,
-            accountType: accountType || 'student',
+            username,
+            accountType: 'student',
             isVerified: false
         });
 
         // Save user
-        await user.save();
-
-        // Generate token
-        const token = generateToken(user);
-
-        // Respond with user and token
-        res.status(201).json({
-            token,
-            user: {
-                id: user._id,
-                email: user.email,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                accountType: user.accountType,
-                isVerified: false
-            }
-        });
+        await newUser.save();
+        
+        return res.status(201).json({ message: 'User created successfully!' });
     } catch (error) {
         res.status(500).json({ 
             message: 'Error registering user', 
@@ -92,44 +63,41 @@ router.post('/register', rateLimitAuth, async (req, res) => {
 // Login route with enhanced security
 router.post('/login', rateLimitAuth, async (req, res) => {
     try {
-        const { email, password, rememberMe = false } = req.body;
+        const { email, password } = req.body;
 
-        // Find user by email
+        // Check if user exists
         const user = await User.findOne({ email });
         if (!user) {
-            return res.status(401).json({ message: 'Invalid email or password' });
+            return res.status(400).json({ message: 'Invalid email or password.' });
         }
 
-        // Check password
-        const isMatch = await user.isValidPassword(password);
+        // Compare password
+        const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
-            return res.status(401).json({ message: 'Invalid email or password' });
-        }
-
-        // Check if email is verified
-        if (!user.isVerified) {
-            return res.status(403).json({ 
-                message: 'Please verify your email before logging in' 
-            });
+            return res.status(400).json({ message: 'Invalid email or password.' });
         }
 
         // Update last login
         user.lastLogin = Date.now();
         await user.save();
 
-        // Generate token
-        const token = generateToken(user, rememberMe);
-
-        // Respond with user and token
-        res.json({
+        // Create a JWT token
+        const payload = {
+            userId: user._id
+        };
+    
+        const token = jwt.sign(payload, process.env.JWT_SECRET, {
+            expiresIn: '1d' // token expires in 1 day
+        });
+    
+        return res.status(200).json({
+            message: 'Login successful',
             token,
             user: {
-                id: user._id,
-                email: user.email,
-                firstName: user.firstName,
-                lastName: user.lastName,
-                accountType: user.accountType,
-                isVerified: true
+            id: user._id,
+            name: user.name,
+            email: user.email,
+            alternateHomePage: user.alternateHomePage  // New field
             }
         });
     } catch (error) {
@@ -140,157 +108,5 @@ router.post('/login', rateLimitAuth, async (req, res) => {
     }
 });
 
-// Email Verification Route
-router.get('/verify-email/:token', async (req, res) => {
-    try {
-        const { token } = req.params;
-
-        // Find user with matching token and not expired
-        const user = await User.findOne({
-            emailVerificationToken: token,
-            emailVerificationExpires: { $gt: Date.now() }
-        });
-
-        if (!user) {
-            return res.status(400).json({ 
-                message: 'Verification token is invalid or has expired' 
-            });
-        }
-
-        // Mark user as verified
-        user.isVerified = true;
-        user.emailVerificationToken = undefined;
-        user.emailVerificationExpires = undefined;
-
-        await user.save();
-
-        res.json({ message: 'Email verified successfully' });
-    } catch (error) {
-        res.status(500).json({ 
-            message: 'Error verifying email', 
-            error: error.message 
-        });
-    }
-});
-
-// Forgot Password Route
-router.post('/forgot-password', rateLimitAuth, async (req, res) => {
-    try {
-        const { email } = req.body;
-
-        // Find user by email
-        const user = await User.findOne({ email });
-        if (!user) {
-            return res.status(404).json({ message: 'No account found with that email' });
-        }
-
-        // Generate password reset token
-        const resetToken = user.getResetPasswordToken();
-        await user.save();
-
-        // Create reset URL
-        const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-
-        // Send email
-        try {
-            await sendEmail({
-                email: user.email,
-                subject: 'Password Reset Request',
-                message: `You are receiving this email because you (or someone else) has requested a password reset. 
-                          Click the following link to reset your password: ${resetUrl}`
-            });
-
-            res.json({ message: 'Password reset email sent' });
-        } catch (emailError) {
-            // If email sending fails, clear the reset token
-            user.resetPasswordToken = undefined;
-            user.resetPasswordExpire = undefined;
-            await user.save();
-
-            return res.status(500).json({ message: 'Email could not be sent' });
-        }
-    } catch (error) {
-        res.status(500).json({ 
-            message: 'Error processing password reset', 
-            error: error.message 
-        });
-    }
-});
-
-// Reset Password Route
-router.post('/reset-password/:token', async (req, res) => {
-    try {
-        const { token } = req.params;
-        const { password } = req.body;
-
-        // Hash the token for comparison
-        const hashedToken = crypto
-            .createHash('sha256')
-            .update(token)
-            .digest('hex');
-
-        // Find user with matching token and not expired
-        const user = await User.findOne({
-            resetPasswordToken: hashedToken,
-            resetPasswordExpire: { $gt: Date.now() }
-        });
-
-        if (!user) {
-            return res.status(400).json({ 
-                message: 'Password reset token is invalid or has expired' 
-            });
-        }
-
-        // Set new password
-        user.password = password;
-        user.resetPasswordToken = undefined;
-        user.resetPasswordExpire = undefined;
-
-        await user.save();
-
-        res.json({ message: 'Password reset successful' });
-    } catch (error) {
-        res.status(500).json({ 
-            message: 'Error resetting password', 
-            error: error.message 
-        });
-    }
-});
-
-// Protected routes for user profile and settings
-router.get('/profile', authenticateToken, (req, res) => {
-    res.json(req.user);
-});
-
-router.patch('/update', authenticateToken, async (req, res) => {
-    try {
-        const { firstName, lastName, phoneNumber, accountType } = req.body;
-        
-        // Update only the fields that are provided
-        const updateFields = {};
-        if (firstName) updateFields.firstName = firstName;
-        if (lastName) updateFields.lastName = lastName;
-        if (phoneNumber) updateFields.phoneNumber = phoneNumber;
-        if (accountType) updateFields.accountType = accountType;
-
-        // Find and update user
-        const updatedUser = await User.findByIdAndUpdate(
-            req.user._id, 
-            updateFields, 
-            { 
-                new: true, 
-                runValidators: true,
-                select: '-password' // Exclude password from returned document
-            }
-        );
-
-        res.json(updatedUser);
-    } catch (error) {
-        res.status(500).json({ 
-            message: 'Error updating user', 
-            error: error.message 
-        });
-    }
-});
 
 module.exports = router;

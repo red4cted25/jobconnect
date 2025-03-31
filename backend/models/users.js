@@ -44,16 +44,6 @@ const UserSchema = new mongoose.Schema({
         },
         default: 'student'
     },
-    phoneNumber: {
-        type: String,
-        trim: true,
-        validate: {
-            validator: function(v) {
-                return /^\+?[1-9]\d{1,14}$/.test(v);
-            },
-            message: 'Please provide a valid phone number'
-        }
-    },
     isVerified: {
         type: Boolean,
         default: false

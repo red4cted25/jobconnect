@@ -1,6 +1,6 @@
-import React from 'react'
 
-const apply = () => {
+
+const ApplyPage = () => {
   return (
     <div className="lg:bg-gray-300 flex flex-col items-center">
          <h1 className="absolute mt-6 ml-4 text-[#5c5c5c] right-480 text-xl hover:underline">Back</h1>
@@ -60,4 +60,4 @@ const apply = () => {
   )
 }
 
-export default apply
+export default ApplyPage
