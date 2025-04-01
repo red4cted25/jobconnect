@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 import { createBrowserRouter, RouterProvider, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
+
 import ApplyPage from './components/Apply.jsx';
 import ProfilePage from './components/Profile.jsx';
 import HomePage from './Home.jsx';

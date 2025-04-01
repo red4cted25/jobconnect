@@ -23,15 +23,15 @@ const JobsPage = () => {
         .then((data) => {
             if (data.success) {
                 const formatted = data.data.map((job) => ({
-                    jobId: job.jobId,
+                    id: job._id, 
                     title: job.title,
                     company: job.company,
-                    desc: job.desc,
+                    desc: job.description, 
                     payRange: {
                         min: job.payRange?.min ?? 0,  // Default to 0 if undefined
                         max: job.payRange?.max ?? 0,
                         currency: job.payRange?.currency || 'USD',
-                        unit: job.payRange?.unit || 'hourly',
+                        unit: job.payRange?.unit || 'hour', 
                     },
                     location: job.location,
                     datePosted: new Date(job.datePosted),

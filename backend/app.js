@@ -37,9 +37,9 @@ const connectDB = require('./db/connect');
 connectDB(process.env.MONGO_URI);
 
 // Existing routes
-app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
-app.use("/jobs", jobRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/jobs", jobRoutes);
 
 const PORT = process.env.PORT || 5001;
 app.listen(PORT, () => {

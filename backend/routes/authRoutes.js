@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const crypto = require('crypto');
 const User = require('../models/users');
-const { authenticateToken, rateLimitAuth } = require('../middleware/authenticateToken');
-const sendEmail = require('../utils/CloudinaryConfig');
+require('dotenv').config();
+const { rateLimitAuth, authenticateToken } = require('../middleware/authenticateToken');
 
 // Register new user
 router.post('/register', rateLimitAuth, async (req, res) => {
@@ -51,7 +51,23 @@ router.post('/register', rateLimitAuth, async (req, res) => {
         // Save user
         await newUser.save();
         
-        return res.status(201).json({ message: 'User created successfully!' });
+        // Create a JWT token
+        const payload = {
+            userId: newUser._id
+        };
+    
+        const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' }); // token expires in 1 day 
+
+        return res.status(200).json({
+            message: 'Sign in successful',
+            token,
+            user: {
+            id: newUser._id,
+            name: newUser.firstName + ' ' + newUser.lastName,
+            email: newUser.email,
+            username: newUser.username,
+            }
+        });
     } catch (error) {
         res.status(500).json({ 
             message: 'Error registering user', 
@@ -97,7 +113,6 @@ router.post('/login', rateLimitAuth, async (req, res) => {
             id: user._id,
             name: user.name,
             email: user.email,
-            alternateHomePage: user.alternateHomePage  // New field
             }
         });
     } catch (error) {
@@ -108,5 +123,17 @@ router.post('/login', rateLimitAuth, async (req, res) => {
     }
 });
 
+// Retrieve user information
+router.get("/me", authenticateToken, async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select("-password"); // Exclude password
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ message: "Server error" });
+    }
+});
 
 module.exports = router;

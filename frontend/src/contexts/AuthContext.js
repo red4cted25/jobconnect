@@ -8,33 +8,56 @@ export const AuthProvider = ({ children }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
 
-    // Check authentication on initial load
+    // Load user data from localStorage on initial render
     useEffect(() => {
-        const token = localStorage.getItem('token');
-        const userData = localStorage.getItem('user');
-        
-        if (token && userData) {
-            try {
-                // Parse user data and set authentication
-                const parsedUser = JSON.parse(userData);
-                setIsAuthenticated(true);
-                setUser(parsedUser);
-            } catch (error) {
-                // Clear invalid localStorage data
-                localStorage.removeItem('token');
-                localStorage.removeItem('user');
-            }
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
         }
     }, []);
 
+    const checkAuth = async () => {
+        const token = localStorage.getItem("token");
+    
+        if (!token) {
+            setUser(null);
+            return;
+        }
+    
+        try {
+            const response = await fetch("/api/auth/me", {
+                method: "GET",
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+    
+            if (!response.ok) {
+                throw new Error("Failed to fetch user data");
+            }
+    
+            const userData = await response.json();
+            setUser(userData); // Ensure user state is updated
+        } catch (error) {
+            console.error("Auth check failed:", error);
+            setUser(null);
+        }
+    };
+
+    // Check authentication on initial load
+    useEffect(() => {
+        checkAuth();
+
+        // Listen for changes to localStorage
+        window.addEventListener('storage', checkAuth);
+
+        return () => window.removeEventListener('storage', checkAuth);
+    }, []);
+
     // Login method
-    const login = (token, userData) => {
-        // Store token and user data in localStorage
-        localStorage.setItem('token', token);
-        localStorage.setItem('user', JSON.stringify(userData));
-        
-        // Update authentication state
-        setIsAuthenticated(true);
+    const login = (userData, token) => {
+        localStorage.setItem("user", JSON.stringify(userData));
+        localStorage.setItem("token", token);
         setUser(userData);
     };
 

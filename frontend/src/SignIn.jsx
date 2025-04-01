@@ -81,12 +81,12 @@ const AuthPage = () => {
                         {isLogin ? 'Welcome Back!' : 'Ready to take the next step?'}
                     </h2>
                     <p className="text-gray-600 mb-6">
-                        {isLogin ? 'Log in to your account' : 'Create an account or '}
+                        {isLogin ? 'Log in to your account or ' : 'Create an account or '}
                         <span 
                             onClick={() => setIsLogin(!isLogin)} 
                             className="text-blue-600 cursor-pointer hover:underline"
                         >
-                            {isLogin ? 'Sign up' : 'sign in'}
+                            {isLogin ? 'sign up' : 'log in'}
                         </span>
                     </p>
                     

@@ -2,8 +2,12 @@ import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { RxHamburgerMenu, RxCross1 } from "react-icons/rx";
 import { MdArrowDropDown } from "react-icons/md";
+import { useAuth } from '../contexts/AuthContext'; // Importing AuthContext for authentication state
+import { FaUser, FaCog, FaBriefcase, FaSignOutAlt } from 'react-icons/fa';
 
 const Header = () => {
+    const { user, logout } = useAuth(); // Fetching authentication state from AuthContext
+    console.log(user)
     // React Hooks for the mobile menu and navbar dropdowns
     // State management for navigation and responsiveness
     const [menuOpen, setMenuOpen] = useState(false); // Controls mobile menu visibility
@@ -60,11 +64,6 @@ const Header = () => {
             [menu]: !prev[menu],
         }));
     };
-
-    
-    if(!localStorage.getItem('token')) {
-        
-    }
 
     return (
         <header className="bg-brand-secondary w-full h-20 px-6 md:px-12 transition-all ease-linear duration-300">
@@ -128,9 +127,56 @@ const Header = () => {
                     </ul>
                     {/* Sign In / Log In */}
                     {/* Switches to show username and profile picture when user is signed in */}
-                    {(!loggedIn) ? 
-                    <Link to="/login" className='cursor-pointer outline-none py-3 px-5 rounded-nav-button text-base bg-brand-primary text-white transition-all ease-linear duration-300 hover:bg-brand-dark-primary active:bg-gradient-to-tr active:from-brand-primary active:via-brand-dark-primary active:to-brand-primary'>Sign In</Link>
-                    : <Link to="/profile" className=''></Link>}
+                    {user ? (
+                        <div className="relative" onMouseEnter={() => setDropdownOpen(true)} onMouseLeave={() => setDropdownOpen(false)}>
+                            <div className="flex flex-col items-center cursor-pointer">
+                                <div className="w-10 h-10 rounded-full bg-gray-300 flex flex-col items-center justify-center">
+                                    {user.profileImage ? (
+                                        <img 
+                                        src={user.profileImage} 
+                                        alt={user.username} 
+                                        className="w-10 h-10 rounded-full object-cover"
+                                        />
+                                    ) : (
+                                        <FaUser className="text-gray-600" />
+                                    )}
+                                </div>
+                                <span className="text-sm mt-1">{user.username}</span>
+                            </div>
+
+                        {/* Dropdown Menu */}
+                        {dropdownOpen && (
+                            <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10">
+                            <Link 
+                                to="/profile" 
+                                className="px-4 py-2 text-gray-800 hover:bg-gray-100 flex items-center"
+                            >
+                                <FaUser className="mr-2" /> Profile
+                            </Link>
+                            <Link 
+                                to="/settings" 
+                                className="px-4 py-2 text-gray-800 hover:bg-gray-100 flex items-center"
+                            >
+                                <FaCog className="mr-2" /> Settings
+                            </Link>
+                            <Link 
+                                to="/my-jobs" 
+                                className="px-4 py-2 text-gray-800 hover:bg-gray-100 flex items-center"
+                            >
+                                <FaBriefcase className="mr-2" /> My Jobs
+                            </Link>
+                            <button 
+                                onClick={logout} 
+                                className="w-full text-left px-4 py-2 text-gray-800 hover:bg-gray-100 flex items-center"
+                            >
+                                <FaSignOutAlt className="mr-2" /> Sign Out
+                            </button>
+                            </div>
+                        )}
+                        </div>
+                    ) : (
+                        <Link to="/login" className='cursor-pointer outline-none py-3 px-5 rounded-nav-button text-base bg-brand-primary text-white transition-all ease-linear duration-300 hover:bg-brand-dark-primary active:bg-gradient-to-tr active:from-brand-primary-light active:via-brand-primary active:to-brand-primary-light'>Sign In</Link>
+                    )}
                 </nav>
                 <div className="cursor-pointer flex items-center text-3xl transition-all ease-linear duration-300 relative hover:text-brand-primary md:hidden">
                     {!menuOpen ? <RxHamburgerMenu onClick={menuToggleHandler}/> : <RxCross1 onClick={menuToggleHandler} />}
