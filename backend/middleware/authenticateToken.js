@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const User = require('../models/users'); 
 const { RateLimiterMemory } = require('rate-limiter-flexible');
 
 // Rate limiter for authentication attempts
@@ -15,7 +14,8 @@ const authenticateToken = async (req, res, next) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = { id: decoded.userId };
+        // Use the property 'id' because that's what we used in the token payload
+        req.user = { id: decoded.id };
         next();
     } catch (err) {
         return res.status(401).json({ message: "Invalid token" });

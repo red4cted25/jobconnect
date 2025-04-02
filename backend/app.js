@@ -17,15 +17,14 @@ const app = express();
 
 // CORS configuration
 const corsOptions = {
-    origin: function(origin, callback) {
-        // Allow requests with no origin (like file:// requests)
+    origin: function (origin, callback) {
         if (!origin) return callback(null, true);
         callback(null, true);
     },
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization']
 };
-app.use(cors(corsOptions));
+app.use(cors(corsOptions));  
 
 
 app.options('*', cors(corsOptions));

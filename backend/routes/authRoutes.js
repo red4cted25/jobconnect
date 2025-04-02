@@ -53,7 +53,7 @@ router.post('/register', rateLimitAuth, async (req, res) => {
         
         // Create a JWT token
         const payload = {
-            userId: newUser._id
+            id: newUser._id
         };
     
         const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1d' }); // token expires in 1 day 
@@ -63,7 +63,7 @@ router.post('/register', rateLimitAuth, async (req, res) => {
             token,
             user: {
             id: newUser._id,
-            name: newUser.firstName + ' ' + newUser.lastName,
+            name: `${user.firstName} ${user.lastName}`,
             email: newUser.email,
             username: newUser.username,
             }
@@ -79,7 +79,9 @@ router.post('/register', rateLimitAuth, async (req, res) => {
 // Login route with enhanced security
 router.post('/login', rateLimitAuth, async (req, res) => {
     try {
-        const { email, password } = req.body;
+        // Normalize email to lowercase to ensure consistent matching
+        const email = req.body.email.toLowerCase();
+        const { password } = req.body;
 
         // Check if user exists
         const user = await User.findOne({ email });
@@ -97,22 +99,19 @@ router.post('/login', rateLimitAuth, async (req, res) => {
         user.lastLogin = Date.now();
         await user.save();
 
-        // Create a JWT token
-        const payload = {
-            userId: user._id
-        };
-    
+        // Create a JWT token with the user id
+        const payload = { id: user._id };
         const token = jwt.sign(payload, process.env.JWT_SECRET, {
             expiresIn: '1d' // token expires in 1 day
         });
-    
+
         return res.status(200).json({
             message: 'Login successful',
             token,
             user: {
-            id: user._id,
-            name: user.name,
-            email: user.email,
+                id: user._id,
+                name: `${user.firstName} ${user.lastName}`,
+                email: user.email,
             }
         });
     } catch (error) {
@@ -122,6 +121,7 @@ router.post('/login', rateLimitAuth, async (req, res) => {
         });
     }
 });
+
 
 // Retrieve user information
 router.get("/me", authenticateToken, async (req, res) => {

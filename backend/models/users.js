@@ -48,6 +48,15 @@ const UserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    bio: {
+        type: String,
+        default: ""
+    },
+    // New field for the profile picture
+    profilePicture: {
+        type: String,
+        default: ""
+    },
     resetPasswordToken: String,
     resetPasswordExpire: Date,
     lastLogin: Date
@@ -57,13 +66,9 @@ const UserSchema = new mongoose.Schema({
 
 // Password hashing middleware
 UserSchema.pre('save', async function(next) {
-    // Only hash the password if it has been modified (or is new)
     if (!this.isModified('password')) return next();
-
     try {
-        // Generate a salt
-        const salt = await bcrypt.genSalt(12); // Increased salt rounds for more security
-        // Hash the password along with the salt
+        const salt = await bcrypt.genSalt(12);
         this.password = await bcrypt.hash(this.password, salt);
         next();
     } catch (error) {
@@ -78,18 +83,12 @@ UserSchema.methods.isValidPassword = async function(candidatePassword) {
 
 // Method to generate password reset token
 UserSchema.methods.getResetPasswordToken = function() {
-    // Generate token
     const resetToken = crypto.randomBytes(20).toString('hex');
-
-    // Hash token and set to resetPasswordToken field
     this.resetPasswordToken = crypto
         .createHash('sha256')
         .update(resetToken)
         .digest('hex');
-
-    // Set token expire time
-    this.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 minutes
-
+    this.resetPasswordExpire = Date.now() + 10 * 60 * 1000;
     return resetToken;
 };
 

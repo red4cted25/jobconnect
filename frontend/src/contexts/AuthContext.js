@@ -5,7 +5,6 @@ const AuthContext = createContext(null);
 
 // AuthProvider component to manage authentication state
 export const AuthProvider = ({ children }) => {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [user, setUser] = useState(null);
 
     // Load user data from localStorage on initial render
@@ -25,7 +24,7 @@ export const AuthProvider = ({ children }) => {
         }
     
         try {
-            const response = await fetch("/api/auth/me", {
+            const response = await fetch("http://localhost:5000/api/auth/me", {
                 method: "GET",
                 headers: {
                     Authorization: `Bearer ${token}`,
@@ -37,12 +36,13 @@ export const AuthProvider = ({ children }) => {
             }
     
             const userData = await response.json();
-            setUser(userData); // Ensure user state is updated
+            setUser(userData);
         } catch (error) {
             console.error("Auth check failed:", error);
             setUser(null);
         }
     };
+    
 
     // Check authentication on initial load
     useEffect(() => {
@@ -68,12 +68,11 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('user');
         
         // Reset authentication state
-        setIsAuthenticated(false);
         setUser(null);
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>{children}</AuthContext.Provider>
+        <AuthContext.Provider value={{ user, login, logout }}>{children}</AuthContext.Provider>
     );
 };
 

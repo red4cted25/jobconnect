@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { BiArrowBack } from "react-icons/bi";
 import { Link, useNavigate } from 'react-router-dom'
 import axios from 'axios';
+import { useAuth } from './contexts/AuthContext'; // Import the AuthContext hook
 
 const AuthPage = () => {
     const [isLogin, setIsLogin] = useState(false);
@@ -14,6 +15,7 @@ const AuthPage = () => {
     });
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { login } = useAuth(); // Destructure login from useAuth
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -35,11 +37,11 @@ const AuthPage = () => {
                     password: formData.password
                 });
 
-                // Store the JWT token
-                localStorage.setItem('token', response.data.token);
-                
-                // Redirect to dashboard or home page
-                navigate('/dashboard');
+                // Update AuthContext with user data and token
+                login(response.data.user, response.data.token);
+
+                // Navigate to home page
+                navigate('/');
             } else {
                 // Sign up logic
                 const response = await axios.post('http://localhost:5000/api/auth/register', {
@@ -50,13 +52,14 @@ const AuthPage = () => {
                     username: formData.username
                 });
 
-                // Automatically log in after sign up
-                localStorage.setItem('token', response.data.token);
+                // Update AuthContext with user data and token
+                login(response.data.user, response.data.token);
+
+                // Navigate to home page
                 navigate('/');
             }
         } catch (err) {
-            // Handle errors
-            console.log(err)
+            console.log(err);
             setError(err.response?.data?.message || 'An error occurred');
         }
     };
@@ -181,4 +184,4 @@ const AuthPage = () => {
     )
 }
 
-export default AuthPage
+export default AuthPage;

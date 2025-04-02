@@ -15,11 +15,15 @@ import SettingsPage from './Settings.jsx';
 
 // Protected Route Component
 const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated } = useAuth();
-  
-  // Redirect to login if not authenticated
-  return isAuthenticated ? children : <Navigate to="/login" replace />;
+  const { user } = useAuth();
+
+  if (!user) {
+      return <Navigate to="/login" />;
+  }
+
+  return children;
 };
+
 
 // Create router with protected and public routes
 const router = createBrowserRouter([
@@ -27,9 +31,9 @@ const router = createBrowserRouter([
   { path: '/jobs', element: <JobsPage /> },
   { path: '/login', element: <SignInPage /> },
   { path: '/FAQ', element: <FAQPage /> },
-  { path: '/settings', element: (<ProtectedRoute><SettingsPage /></ProtectedRoute>) },
-  { path: '/apply', element: (<ProtectedRoute><ApplyPage /></ProtectedRoute>) },
-  { path: '/profile', element: (<ProtectedRoute><ProfilePage /></ProtectedRoute>) }
+  { path: '/settings', element: (<SettingsPage />) },
+  { path: '/apply', element: (<ApplyPage />) },
+  { path: '/profile', element: (<ProfilePage />) }
 ]);
 
 // Render the app with AuthProvider
