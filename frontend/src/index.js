@@ -32,7 +32,7 @@ const router = createBrowserRouter([
   { path: '/login', element: <SignInPage /> },
   { path: '/FAQ', element: <FAQPage /> },
   { path: '/settings', element: (<SettingsPage />) },
-  { path: '/apply', element: (<ApplyPage />) },
+  { path: '/jobs/apply/:id', element: (<ApplyPage />) },
   { path: '/profile', element: (<ProfilePage />) }
 ]);
 

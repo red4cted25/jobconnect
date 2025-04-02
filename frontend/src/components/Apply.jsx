@@ -1,105 +1,221 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import Header from "./Header"; // Import your header component
+import { useParams, useNavigate } from "react-router-dom";
+import Header from "./Header";
 
-const ApplyPage = ({ match }) => {
+const ApplyPage = () => {
+    const { id } = useParams(); // id is the job's _id
+    const navigate = useNavigate();
     const [job, setJob] = useState(null);
+    const [loadingJob, setLoadingJob] = useState(true);
     const [error, setError] = useState("");
     const [applicationData, setApplicationData] = useState({
         firstName: "",
         lastName: "",
         email: "",
+        phone: "",
         address: "",
         city: "",
         state: "",
-        resume: null,
-        coverLetter: null,
+        coverLetter: ""
     });
 
+    // Fetch the job details using the id from the URL
     useEffect(() => {
-        const fetchJobData = async () => {
+        const fetchJob = async () => {
         try {
-            const response = await axios.get(
-            `http://localhost:5000/api/jobs/${match.params.jobId}`
-            );
+            const response = await axios.get(`http://localhost:5000/api/jobs/${id}`);
             setJob(response.data);
+            setLoadingJob(false);
         } catch (err) {
-            setError("Failed to load job details");
+            console.error(err);
+            setError("Failed to load job details.");
+            setLoadingJob(false);
         }
         };
 
-        fetchJobData();
-    }, [match.params.jobId]);
+        fetchJob();
+    }, [id]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setApplicationData((prevData) => ({
         ...prevData,
-        [name]: value,
+        [name]: value
         }));
     };
 
-    const handleSubmitApplication = async (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-        // Send application data to the backend (you need to create an endpoint for submitting applications)
-        const response = await axios.post(
+        // Submit application with the job's _id as jobId
+        await axios.post(
             "http://localhost:5000/api/applications",
-            { ...applicationData, jobId: job._id }, // Link the job to the application
+            { ...applicationData, jobId: job._id },
             {
             headers: {
-                Authorization: `Bearer ${localStorage.getItem("token")}`,
-            },
+                Authorization: `Bearer ${localStorage.getItem("token")}`
+            }
             }
         );
-        console.log(response.data); // Handle successful submission
+        // On success, navigate back to the jobs page or show a success message
+        navigate("/jobs");
         } catch (err) {
-        setError("Failed to submit application");
+        console.error(err);
+        setError("Failed to submit application. Please try again.");
         }
     };
-
-    if (error) {
-        return <div>{error}</div>;
-    }
 
     return (
         <>
         <Header />
-        <div className="lg:bg-gray-300 flex flex-col items-center">
-            <h1 className="absolute mt-6 ml-4 text-[#5c5c5c] right-480 text-xl hover:underline">
-            Back
-            </h1>
-            <div className="flex flex-col text-center mt-8 lg:bg-gray-200 lg:p-10 lg:rounded-lg">
-            <h3 className="font-semibold text-lg">Currently Applying For:</h3>
-            <h1 className="font-bold text-2xl text-[#FF8000]">
-                {job ? job.title : "Loading job details..."}
-            </h1>
-            {/* Add additional job details here */}
+        <div className="max-w-3xl mx-auto p-6">
+            {loadingJob ? (
+            <div className="flex justify-center items-center min-h-screen">
+                <p>Loading job details...</p>
             </div>
-            <div className="my-2 flex flex-col lg:items-center lg:bg-gray-200 lg:p-10 lg:rounded-lg lg:w-225">
-            <h1 className="font-bold text-[#FF8000] ml-6 text-2xl">My Information</h1>
-            <form onSubmit={handleSubmitApplication}>
-                <div className="ml-12 lg:ml-0 flex flex-col my-4">
-                <h1 className="font-semibold text-xl text-[#5c5c5c] my-2">First Name</h1>
-                <input
+            ) : error ? (
+            <p className="text-red-500 mb-4">{error}</p>
+            ) : (
+            <>
+                <div className="mb-6">
+                <h1 className="text-3xl font-bold text-brand-primary mb-2">
+                    Apply for {job.title}
+                </h1>
+                <p className="text-lg text-gray-700">
+                    {job.company} &middot; {job.location}
+                </p>
+                </div>
+                <form onSubmit={handleSubmit} className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                        First Name
+                    </label>
+                    <input
+                        type="text"
+                        name="firstName"
+                        value={applicationData.firstName}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-brand-primary focus:border-brand-primary"
+                    />
+                    </div>
+                    <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                        Last Name
+                    </label>
+                    <input
+                        type="text"
+                        name="lastName"
+                        value={applicationData.lastName}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-brand-primary focus:border-brand-primary"
+                    />
+                    </div>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                        Email
+                    </label>
+                    <input
+                        type="email"
+                        name="email"
+                        value={applicationData.email}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-brand-primary focus:border-brand-primary"
+                    />
+                    </div>
+                    <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                        Phone
+                    </label>
+                    <input
+                        type="text"
+                        name="phone"
+                        value={applicationData.phone}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-brand-primary focus:border-brand-primary"
+                    />
+                    </div>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                    Address
+                    </label>
+                    <input
                     type="text"
-                    name="firstName"
-                    value={applicationData.firstName}
+                    name="address"
+                    value={applicationData.address}
                     onChange={handleInputChange}
-                    className="w-80 h-8 border border-gray-400 rounded-lg pl-1"
-                />
+                    required
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-brand-primary focus:border-brand-primary"
+                    />
                 </div>
-                {/* Repeat similar input fields for lastName, email, address, etc. */}
-                <div className="flex justify-center">
-                <button
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                        City
+                    </label>
+                    <input
+                        type="text"
+                        name="city"
+                        value={applicationData.city}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-brand-primary focus:border-brand-primary"
+                    />
+                    </div>
+                    <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                        State
+                    </label>
+                    <select
+                        name="state"
+                        value={applicationData.state}
+                        onChange={handleInputChange}
+                        required
+                        className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-brand-primary focus:border-brand-primary"
+                    >
+                        <option value="">Select a state</option>
+                        <option value="Arizona">Arizona</option>
+                        <option value="California">California</option>
+                        <option value="Colorado">Colorado</option>
+                        <option value="Nevada">Nevada</option>
+                        <option value="New Mexico">New Mexico</option>
+                        <option value="Utah">Utah</option>
+                    </select>
+                    </div>
+                </div>
+                <div>
+                    <label className="block text-sm font-medium text-gray-700">
+                    Cover Letter
+                    </label>
+                    <textarea
+                    name="coverLetter"
+                    value={applicationData.coverLetter}
+                    onChange={handleInputChange}
+                    rows="5"
+                    required
+                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:outline-none focus:ring-brand-primary focus:border-brand-primary"
+                    ></textarea>
+                </div>
+                {error && <p className="text-red-500">{error}</p>}
+                <div className="flex justify-end">
+                    <button
                     type="submit"
-                    className="mx-10 my-8 bg-[#FF8000] p-2 rounded-lg border border-[#C04300]"
-                >
+                    className="bg-brand-primary text-white px-6 py-2 rounded-md uppercase text-sm font-medium hover:bg-brand-primary-light transition-colors"
+                    >
                     Submit Application
-                </button>
+                    </button>
                 </div>
-            </form>
-            </div>
+                </form>
+            </>
+            )}
         </div>
         </>
     );
